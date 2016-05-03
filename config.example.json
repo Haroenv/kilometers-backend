@@ -1,7 +1,12 @@
 {
-  "key": "key-aXXXXXXXXXXXXXX",
-  "domain": "sandboxXXXXXXXXXXXXX.mailgun.org",
-  "from": "postmaster",
+  "mailgun": {
+    "key": "key-aXXXXXXXXXXXXXX",
+    "domain": "sandboxXXXXXXXXXXXXX.mailgun.org",
+    "from": "postmaster"
+  },
+  "googlemaps": {
+    "key": "AIzXXXXXXXXXXXXXXXXX"
+  },
   "firebase": {
     "url": "https://XXXXXX.firebaseio.com",
     "secret": "XXXXXXXXXX"
