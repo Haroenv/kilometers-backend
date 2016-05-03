@@ -1,4 +1,11 @@
 {
+  "emails": {
+    "id": {
+      "email": "spam@haroen.me",
+      "sent": false,
+      "user": "user-1"
+    }
+  },
   "users": {
     "user-1": {
       "name": "Eva Naudts",

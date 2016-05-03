@@ -4,7 +4,6 @@
   "from": "postmaster",
   "firebase": {
     "url": "https://XXXXXX.firebaseio.com",
-    "email": "XXXXXXX@XXXXX.com",
-    "password": "XXXXXXXX"
+    "secret": "XXXXXXXXXX"
   }
 }
