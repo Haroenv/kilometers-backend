@@ -1,0 +1,49 @@
+{
+  "users": {
+    "user-1": {
+      "name": "Eva Naudts",
+      "days": {
+        "some-identifier": true,
+        "other-id": true
+      }
+    }
+  },
+  "days": {
+    "some-identifier": {
+      "user": "user-1",
+      "day": "2016-05-16",
+      "places": {
+        "identifier-0": {
+          "time": 1461855522662,
+          "location": "Brugge",
+          "latitude": 51.0204084,
+          "longitude": 3.6730591
+        },
+        "identifier-1": {
+          "time": 1461855572151,
+          "location": "Gent",
+          "latitude": 51.0204084,
+          "longitude": 3.6730591
+        }
+      }
+    },
+    "other-id": {
+      "user": "user-1",
+      "day": "2016-05-17",
+      "places": {
+        "identifier-2": {
+          "time": 1461855522662,
+          "location": "Brugge",
+          "latitude": 51.0204084,
+          "longitude": 3.6730591
+        },
+        "identifier-3": {
+          "time": 1461855572151,
+          "location": "Gent",
+          "latitude": 51.0204084,
+          "longitude": 3.6730591
+        }
+      }
+    }
+  }
+}
