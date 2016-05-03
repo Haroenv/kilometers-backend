@@ -1,0 +1,10 @@
+{
+  "key": "key-aXXXXXXXXXXXXXX",
+  "domain": "sandboxXXXXXXXXXXXXX.mailgun.org",
+  "from": "postmaster",
+  "firebase": {
+    "url": "https://XXXXXX.firebaseio.com",
+    "email": "XXXXXXX@XXXXX.com",
+    "password": "XXXXXXXX"
+  }
+}

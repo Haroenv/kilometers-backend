@@ -1,0 +1,19 @@
+{
+  "name": "kilometers-backend",
+  "version": "0.1.0",
+  "description": "The backend for the Kilometers app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Haroenv/kilometers-backend.git"
+  },
+  "author": "Haroen Viaene",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Haroenv/kilometers-backend/issues"
+  },
+  "homepage": "https://github.com/Haroenv/kilometers-backend#readme"
+}
