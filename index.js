@@ -5,10 +5,11 @@ const mailgun = require('mailgun-js')({
   domain: config.mailgun.domain
 });
 const path = require('path');
+const fs = require('fs');
 const Firebase = require('firebase');
 const base = new Firebase(config.firebase.url);
 
-const sendEmail = function(to,requestKey) {
+const sendEmail = function(to, requestKey, attachmentName) {
   const emailTemp = `
 <!DOCTYPE html>
 <html>
@@ -37,12 +38,12 @@ Yours truly,
 Kilometers
 Haroen Viaene`;
   mailgun.messages().send({
-    from: 'Kilometers <' + config.mailgun.from + '@' + config.domain + '>',
+    from: `Kilometers <${config.mailgun.from}@${config.mailgun.domain}>`,
     to: to,
     subject: 'Your report is ready!',
     html: emailTemp,
     text: textTemp,
-    attachment: path.join(__dirname, 'package.json')
+    attachment: path.join(__dirname, attachmentName)
   }, function(error, body) {
     if (!error) {
       console.log(body);
@@ -50,26 +51,32 @@ Haroen Viaene`;
         .child(requestKey)
         .child('sent')
         .set(true);
+    } else {
+      console.warn("email error",`Kilometers <${config.mailgun.from}@${config.mailgun.domain}>`);
+      console.warn(error);
     }
   });
-}
+};
 
-const months = ['jan','feb','maa','apr','mei','jun','jul','aug','sept','okt','nov','dec'];
+const months = ['jan', 'feb', 'maa', 'apr', 'mei', 'jun', 'jul', 'aug', 'sept', 'okt', 'nov', 'dec'];
+const header = '"Datum", "Afgelegd traject",  "Vertrek", "Aankomst", "Afstand in km", "Reden"\n';
 
 base.authWithCustomToken(config.firebase.secret, function(error, authData) {
   if (!error) {
-    base.child('emails').on('child_added', snap => {
+    base.child('emails').on('child_added', (snap) => {
       if (snap.val().sent === false || snap.val().sent === 'false') {
-        console.log('"Datum", "Afgelegd traject",  "Vertrek", "Aankomst", "Afstand in km", "Reden"');
+        fs.writeFile(`./report${snap.key()}.csv`, header, (err) => {
+          if (err) console.warn(err)
+        });
         base.child('users').child(snap.val().user).child('days').on('child_added', s => {
-          base.child('days').child(s.key()).on('value', sn => {
+          base.child('days').child(s.key()).on('value', (sn) => {
             const date = new Date(sn.val().day);
             let places = [],
-                start = new Date(),
-                arrival = new Date(),
-                index = 0,
-                distance = 0,
-                reason = sn.val().reason;
+              start = new Date(),
+              arrival = new Date(),
+              index = 0,
+              distance = 0,
+              reason = sn.val().reason;
             for (let i in sn.val().places) {
               if (index === 0) {
                 start = new Date(sn.val().places[i].time);
@@ -80,10 +87,13 @@ base.authWithCustomToken(config.firebase.secret, function(error, authData) {
               distance += sn.val().places[i].distance;
               index++;
             }
-            console.log(`"${date.getDate()} ${months[date.getMonth()]}","${places.join(' — ')}","${start.getHours()}:${start.getMinutes()}","${arrival.getHours()}:${arrival.getMinutes()}","${distance}km","${reason}"`);
+            let line = `"${date.getDate()} ${months[date.getMonth()]}","${places.join(' — ')}","${start.getHours()}:${start.getMinutes()}","${arrival.getHours()}:${arrival.getMinutes()}","${distance}km","${reason}"\n`;
+            fs.appendFile(`./report${snap.key()}.csv`, line, (err) => {
+              if (err) console.warn(err);
+            });
           });
         });
-        sendEmail(snap.val().email,snap.key());
+        // sendEmail(snap.val().email, snap.key(), `report${snap.key()}.csv`);
       }
     });
   }
