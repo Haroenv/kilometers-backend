@@ -12,4 +12,5 @@ Fill in the `config.json` with the correct credentials, like `config.example.jso
 
 # See also
 
-[ios](https://github.com/haroenv/kilometers-ios)
+* [ios](https://github.com/haroenv/kilometers-ios)
+* [kilometers (web landing page)](https://github.com/haroenv/kilometers)

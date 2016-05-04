@@ -21,15 +21,17 @@
       "day": "2016-05-16",
       "places": {
         "identifier-0": {
+          "distance": 0,
           "time": 1461855522662,
           "location": "Brugge",
-          "latitude": 51.0204084,
-          "longitude": 3.6730591
+          "latitude": 51.2199484,
+          "longitude": 3.2211581
         },
         "identifier-1": {
+          "distance": 29,
           "time": 1461855572151,
           "location": "Gent",
-          "latitude": 51.0204084,
+          "latitude": 51.0204081,
           "longitude": 3.6730591
         }
       }
@@ -39,16 +41,18 @@
       "day": "2016-05-17",
       "places": {
         "identifier-2": {
-          "time": 1461855522662,
+          "distance": 0,
+          "time": 1462107964107,
           "location": "Brugge",
-          "latitude": 51.0204084,
-          "longitude": 3.6730591
+          "latitude": 51.2199484,
+          "longitude": 3.2211582
         },
         "identifier-3": {
-          "time": 1461855572151,
+          "distance": 30,
+          "time": 1462120319665,
           "location": "Gent",
-          "latitude": 51.0204084,
-          "longitude": 3.6730591
+          "latitude": 51.0204082,
+          "longitude": 3.6730593
         }
       }
     }
