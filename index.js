@@ -52,7 +52,7 @@ Haroen Viaene`;
         .child('sent')
         .set(true);
     } else {
-      console.warn("email error",`Kilometers <${config.mailgun.from}@${config.mailgun.domain}>`);
+      console.warn("email error", `Kilometers <${config.mailgun.from}@${config.mailgun.domain}>`);
       console.warn(error);
     }
   });
@@ -68,32 +68,43 @@ base.authWithCustomToken(config.firebase.secret, function(error, authData) {
         fs.writeFile(`./report${snap.key()}.csv`, header, (err) => {
           if (err) console.warn(err)
         });
-        base.child('users').child(snap.val().user).child('days').on('child_added', s => {
-          base.child('days').child(s.key()).on('value', (sn) => {
-            const date = new Date(sn.val().day);
-            let places = [],
-              start = new Date(),
-              arrival = new Date(),
-              index = 0,
-              distance = 0,
-              reason = sn.val().reason;
-            for (let i in sn.val().places) {
-              if (index === 0) {
-                start = new Date(sn.val().places[i].time);
-              } else if (index === Object.keys(sn.val().places).length - 1) {
-                arrival = new Date(sn.val().places[i].time);
-              }
-              places.push(sn.val().places[i].location);
-              distance += sn.val().places[i].distance;
-              index++;
-            }
-            let line = `"${date.getDate()} ${months[date.getMonth()]}","${places.join(' — ')}","${start.getHours()}:${start.getMinutes()}","${arrival.getHours()}:${arrival.getMinutes()}","${distance}km","${reason}"\n`;
-            fs.appendFile(`./report${snap.key()}.csv`, line, (err) => {
-              if (err) console.warn(err);
+        let lines = 0;
+        let total;
+        base.child('users').child(snap.val().user).child('days').once('value')
+          .then(temp => {
+            total = temp.numChildren();
+          })
+          .then(() => {
+            base.child('users').child(snap.val().user).child('days').on('child_added', s => {
+              base.child('days').child(s.key()).on('value', (sn) => {
+                const date = new Date(sn.val().day);
+                let places = [],
+                  start = new Date(),
+                  arrival = new Date(),
+                  index = 0,
+                  distance = 0,
+                  reason = sn.val().reason;
+                for (let i in sn.val().places) {
+                  if (index === 0) {
+                    start = new Date(sn.val().places[i].time);
+                  } else if (index === Object.keys(sn.val().places).length - 1) {
+                    arrival = new Date(sn.val().places[i].time);
+                  }
+                  places.push(sn.val().places[i].location);
+                  distance += sn.val().places[i].distance;
+                  index++;
+                }
+                let line = `"${date.getDate()} ${months[date.getMonth()]}","${places.join(' — ')}","${start.getHours()}:${start.getMinutes()}","${arrival.getHours()}:${arrival.getMinutes()}","${distance}km","${reason}"\n`;
+                fs.appendFile(`./report${snap.key()}.csv`, line, (err) => {
+                  if (err) console.warn(err);
+                  lines++;
+                  if (lines === total) {
+                    sendEmail(snap.val().email, snap.key(), `report${snap.key()}.csv`);
+                  }
+                });
+              });
             });
           });
-        });
-        // sendEmail(snap.val().email, snap.key(), `report${snap.key()}.csv`);
       }
     });
   }
