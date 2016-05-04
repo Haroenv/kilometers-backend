@@ -8,7 +8,7 @@ const path = require('path');
 const Firebase = require('firebase');
 const base = new Firebase(config.firebase.url);
 
-const sendEmail = function() {
+const sendEmail = function(to,requestKey) {
   const emailTemp = `
 <!DOCTYPE html>
 <html>
@@ -38,7 +38,7 @@ Kilometers
 Haroen Viaene`;
   mailgun.messages().send({
     from: 'Kilometers <' + config.mailgun.from + '@' + config.domain + '>',
-    to: snap.val().email,
+    to: to,
     subject: 'Your report is ready!',
     html: emailTemp,
     text: textTemp,
@@ -47,7 +47,7 @@ Haroen Viaene`;
     if (!error) {
       console.log(body);
       base.child('emails')
-        .child(snap.key())
+        .child(requestKey)
         .child('sent')
         .set(true);
     }
@@ -63,22 +63,27 @@ base.authWithCustomToken(config.firebase.secret, function(error, authData) {
         console.log('"Datum", "Afgelegd traject",  "Vertrek", "Aankomst", "Afstand in km", "Reden"');
         base.child('users').child(snap.val().user).child('days').on('child_added', s => {
           base.child('days').child(s.key()).on('value', sn => {
-            // console.log(sn.val());
             const date = new Date(sn.val().day);
+            let places = [],
+                start = new Date(),
+                arrival = new Date(),
+                index = 0,
+                distance = 0,
+                reason = sn.val().reason;
             for (let i in sn.val().places) {
-              let place = sn.val().places[i];
-              console.log(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${place.latitude},${place.longitude}&destinations=${place.latitude},${place.longitude}&key=${config.googlemaps.key}&mode=${"driving"}&departure_time=${place.time}`);
+              if (index === 0) {
+                start = new Date(sn.val().places[i].time);
+              } else if (index === Object.keys(sn.val().places).length - 1) {
+                arrival = new Date(sn.val().places[i].time);
+              }
+              places.push(sn.val().places[i].location);
+              distance += sn.val().places[i].distance;
+              index++;
             }
-            let places = 'Brugge - Gent';
-            let start = '07:00';
-            let arrival = '18:00';
-            let url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${0}&destinations=${0}&key=${config.googlemaps.key}&mode=${"driving"}&departure_time=${0}`;
-            console.log(url);
-            let distance = '5km';
-            console.log(`"${date.getDate()} ${months[date.getMonth()]}","${places}","${start}","${arrival}","${distance}"`);
+            console.log(`"${date.getDate()} ${months[date.getMonth()]}","${places.join(' — ')}","${start.getHours()}:${start.getMinutes()}","${arrival.getHours()}:${arrival.getMinutes()}","${distance}km","${reason}"`);
           });
         });
-        // sendEmail();
+        sendEmail(snap.val().email,snap.key());
       }
     });
   }
